@@ -1,7 +1,7 @@
 import { exit } from 'process'
 import path from 'path'
 import fs from 'fs'
-import { spawn } from 'child_process'
+import { execSync } from 'child_process'
 import { readCache, removeFromCache, setToCache } from './cache'
 
 const [command, ...argv] = process.argv.slice(2)
@@ -76,19 +76,12 @@ const main = () => {
         cmd = `bash`
       }
 
-      const child = spawn(cmd, [...rest], { cwd: target, stdio: 'inherit' })
+      const fullCommand = `${[...rest].join(' ')}`
 
-      child.on('message', (message) => {
-        console.log(message)
-      })
-
-      child.on('error', (error) => {
-        console.error(error.message)
-        exit(1)
-      })
-
-      child.on('exit', (code) => {
-        exit(code ?? 0)
+      execSync(fullCommand, {
+        cwd: target,
+        env: process.env,
+        stdio: 'inherit',
       })
 
       break

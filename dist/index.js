@@ -65,16 +65,11 @@ const main = () => {
             else {
                 cmd = `bash`;
             }
-            const child = (0, child_process_1.spawn)(cmd, [...rest], { cwd: target, stdio: 'inherit' });
-            child.on('message', (message) => {
-                console.log(message);
-            });
-            child.on('error', (error) => {
-                console.error(error.message);
-                (0, process_1.exit)(1);
-            });
-            child.on('exit', (code) => {
-                (0, process_1.exit)(code ?? 0);
+            const fullCommand = `${[...rest].join(' ')}`;
+            (0, child_process_1.execSync)(fullCommand, {
+                cwd: target,
+                env: process.env,
+                stdio: 'inherit',
             });
             break;
         }
