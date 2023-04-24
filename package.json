@@ -1,0 +1,24 @@
+{
+  "name": "lazy-alias",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsx ./src/index",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "tsx": "^3.12.6"
+  },
+  "devDependencies": {
+    "@types/minimist": "^1.2.2",
+    "@types/node": "^18.16.0",
+    "typescript": "^5.0.4"
+  },
+  "bin": {
+    "lz": "./dist/index.js"
+  }
+}
