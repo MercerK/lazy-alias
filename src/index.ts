@@ -21,8 +21,8 @@ const main = () => {
     case 'set': {
       const [key, value] = argv
 
-      if (!key) throw new Error('No key provided')
-      if (!value) throw new Error('No value provided')
+      if (!key) throw new Error('No alias provided')
+      if (!value) throw new Error('No path provided')
 
       if (isValidPath(value) === false) throw new Error('Invalid path provided')
 
@@ -34,26 +34,46 @@ const main = () => {
     case 'delete': {
       const [key] = argv
 
-      if (!key) throw new Error('No key provided')
+      if (!key) throw new Error('No alias provided')
 
       removeFromCache(key)
 
       break
     }
 
+    case 'list': {
+      const cache = readCache()
+      const keys = Object.keys(cache)
+
+      console.log('Lazy Aliases:')
+
+      if (keys.length === 0) {
+        console.log('- No aliases')
+        break
+      }
+
+      for (const key of keys) {
+        console.log(`- ${key}: ${cache[key]}`)
+      }
+
+      break
+    }
+
     default: {
-      const [key, ...rest] = argv
+      const [...rest] = argv
       const cache = readCache()
 
-      if (!key) throw new Error('No key provided')
-      if (!cache[command]) throw new Error('Command not found in cache')
+      if (!cache[command]) throw new Error('Alias not found')
 
       const target = cache[command]
       const isWindows = process.platform === 'win32'
 
-      let cmd = key
+      let cmd = ''
+
       if (isWindows) {
-        cmd = `${key}.cmd`
+        cmd = `powershell.exe`
+      } else {
+        cmd = `bash`
       }
 
       const child = spawn(cmd, [...rest], { cwd: target, stdio: 'inherit' })

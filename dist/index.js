@@ -23,9 +23,9 @@ const main = () => {
         case 'set': {
             const [key, value] = argv;
             if (!key)
-                throw new Error('No key provided');
+                throw new Error('No alias provided');
             if (!value)
-                throw new Error('No value provided');
+                throw new Error('No path provided');
             if (isValidPath(value) === false)
                 throw new Error('Invalid path provided');
             (0, cache_1.setToCache)(key, path_1.default.resolve(process.cwd(), value));
@@ -34,22 +34,36 @@ const main = () => {
         case 'delete': {
             const [key] = argv;
             if (!key)
-                throw new Error('No key provided');
+                throw new Error('No alias provided');
             (0, cache_1.removeFromCache)(key);
             break;
         }
-        default: {
-            const [key, ...rest] = argv;
+        case 'list': {
             const cache = (0, cache_1.readCache)();
-            if (!key)
-                throw new Error('No key provided');
+            const keys = Object.keys(cache);
+            console.log('Lazy Aliases:');
+            if (keys.length === 0) {
+                console.log('- No aliases');
+                break;
+            }
+            for (const key of keys) {
+                console.log(`- ${key}: ${cache[key]}`);
+            }
+            break;
+        }
+        default: {
+            const [...rest] = argv;
+            const cache = (0, cache_1.readCache)();
             if (!cache[command])
-                throw new Error('Command not found in cache');
+                throw new Error('Alias not found');
             const target = cache[command];
             const isWindows = process.platform === 'win32';
-            let cmd = key;
+            let cmd = '';
             if (isWindows) {
-                cmd = `${key}.cmd`;
+                cmd = `powershell.exe`;
+            }
+            else {
+                cmd = `bash`;
             }
             const child = (0, child_process_1.spawn)(cmd, [...rest], { cwd: target, stdio: 'inherit' });
             child.on('message', (message) => {
