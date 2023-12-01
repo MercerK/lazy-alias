@@ -31,6 +31,20 @@ const main = () => {
       break
     }
 
+    case 'get': {
+      const [key] = argv
+
+      if (!key) throw new Error('No alias provided')
+
+      const cache = readCache()
+
+      if (!cache[key]) throw new Error('Alias not found')
+
+      console.log(cache[key])
+
+      break
+    }
+
     case 'delete': {
       const [key] = argv
 
